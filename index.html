@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ASL translation Hub</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <!-- MediaPipe and TensorFlow JS dependencies -->
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+</head>
+<body>
+
+  <!-- --- SIDEBAR --- -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <p class="logo-eyebrow">ASL Translation Hub</p>
+      <p class="logo-title">ASL Platform</p>
+    </div>
+
+    <!-- User Profile Card -->
+    <div class="user-profile">
+      <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" class="user-avatar" id="user-avatar" alt="Avatar">
+      <div class="user-name" id="user-name">Guest User</div>
+      <div class="user-login" id="user-login">@guest</div>
+    </div>
+
+    <nav class="nav-menu">
+      <button class="nav-btn active" data-page="dashboard">📊 Dashboard</button>
+      <button class="nav-btn" data-page="translation">🎥 Real-time Translation</button>
+      <button class="nav-btn" data-page="quiz">🎮 Interactive Practice Quiz</button>
+      <button class="nav-btn" data-page="dictionary">📖 ASL Dictionary</button>
+      <button class="nav-btn" data-page="history">📜 Detection History</button>
+      <button class="nav-btn" data-page="settings">⚙️ Model & Settings</button>
+      <button class="nav-btn" data-page="landmark">✋ Hand Landmark Map</button>
+    </nav>
+
+    <div class="sidebar-footer">
+      ASL Sign Language Detector v1.0<br>
+      Powered by MediaPipe Client JS
+    </div>
+  </aside>
+
+  <!-- --- MAIN CONTENT --- -->
+  <main class="main-content">
+
+    <!-- === DASHBOARD PAGE === -->
+    <section id="dashboard-page" class="page-section active">
+      <div class="page-header">
+        <p class="eyebrow">Platform Analytics</p>
+        <h1>ASL Analytics Dashboard</h1>
+        <p class="sub-desc">System performance metrics, recent translation trends, and model accuracy logs.</p>
+      </div>
+
+      <!-- Stat Cards -->
+      <div class="metrics-container">
+        <div class="metric-card">
+          <div class="metric-label">Total Signs Translated</div>
+          <div class="metric-value" id="stat-total-translated">1482</div>
+        </div>
+        <div class="metric-card metric-card-teal">
+          <div class="metric-label">Average Accuracy</div>
+          <div class="metric-value">94.2%</div>
+        </div>
+        <div class="metric-card metric-card-purple">
+          <div class="metric-label">Response Latency</div>
+          <div class="metric-value">12 ms</div>
+        </div>
+      </div>
+
+      <!-- Charts & Trends Section -->
+      <div class="dashboard-grid">
+        <div class="dashboard-card">
+          <h3>Translation Activity Trend</h3>
+          <div class="mock-chart-container">
+            <svg viewBox="0 0 500 200" class="line-chart-svg">
+              <path d="M 0 160 L 70 140 L 140 120 L 210 135 L 280 100 L 350 80 L 420 50 L 500 40" fill="none" stroke="#4F8EF7" stroke-width="4"></path>
+              <circle cx="420" cy="50" r="6" fill="#4F8EF7"></circle>
+              <text x="420" y="30" fill="#F0F2F8" font-size="10" text-anchor="middle">Active</text>
+            </svg>
+            <div class="chart-labels">
+              <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+            </div>
+          </div>
+        </div>
+        <div class="dashboard-card">
+          <h3>Common Alphabet Frequency</h3>
+          <div class="mock-chart-container">
+            <div class="bar-chart-container">
+              <div class="bar-group"><div class="bar" style="height: 90%;"></div><span>A</span></div>
+              <div class="bar-group"><div class="bar" style="height: 70%;"></div><span>B</span></div>
+              <div class="bar-group"><div class="bar" style="height: 55%;"></div><span>C</span></div>
+              <div class="bar-group"><div class="bar" style="height: 50%;"></div><span>L</span></div>
+              <div class="bar-group"><div class="bar" style="height: 40%;"></div><span>I</span></div>
+              <div class="bar-group"><div class="bar" style="height: 35%;"></div><span>Y</span></div>
+              <div class="bar-group"><div class="bar" style="height: 25%;"></div><span>U</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Log list -->
+      <div class="dashboard-card" style="margin-top: 1.5rem;">
+        <h3>Recent Translation Activity Log</h3>
+        <table class="premium-table" id="dashboard-recent-table">
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>Letter</th>
+              <th>Hand Used</th>
+              <th>Confidence</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Dynamic rows -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- === REAL-TIME TRANSLATION PAGE === -->
+    <section id="translation-page" class="page-section">
+      <div class="page-header">
+        <p class="eyebrow">Live Processing Engine</p>
+        <h1>Real-Time Translation</h1>
+        <p class="sub-desc">Present your hand sign in front of the camera. The debounced translation engine will type out letters automatically.</p>
+      </div>
+
+      <div class="translation-layout">
+        <!-- Camera area -->
+        <div class="camera-panel">
+          <div class="webcam-toggle-card">
+            <label class="toggle-switch">
+              <input type="checkbox" id="webcam-checkbox">
+              <span class="slider-switch"></span>
+            </label>
+            <span class="toggle-label">🎥 Start Webcam Feed</span>
+          </div>
+
+          <div class="video-container" id="video-container">
+            <video id="webcam-video" autoplay playsinline width="640" height="480" style="display:none;"></video>
+            <canvas id="output-canvas" width="640" height="480"></canvas>
+            <div class="placeholder-overlay" id="placeholder-overlay">
+              <div class="placeholder-icon">📷</div>
+              <div class="placeholder-title">Webcam Inactive</div>
+              <div class="placeholder-desc">Toggle the checkbox above to start the webcam feed and begin detecting ASL gestures.</div>
+            </div>
+          </div>
+
+          <div class="live-status-bar" id="live-status-bar" style="display:none;">
+            <span class="live-dot"></span>
+            <span class="live-tag">LIVE FEED</span>
+            <span class="live-text">Webcam active — hold gestures stable to type</span>
+          </div>
+        </div>
+
+        <!-- Output control panel -->
+        <div class="output-panel">
+          <h3>Transcribed Sentence Output</h3>
+          <textarea id="transcribed-text" readonly placeholder="Stable letters predicted by the hand tracker will accumulate here..."></textarea>
+          
+          <div class="control-buttons">
+            <button id="space-btn" class="ctrl-btn">Space ␣</button>
+            <button id="backspace-btn" class="ctrl-btn">Backspace ⌫</button>
+            <button id="clear-btn" class="ctrl-btn">Clear Text 🗑</button>
+          </div>
+
+          <button id="speak-btn" class="speak-btn">🔊 Speak Sentence (TTS)</button>
+          <button id="download-btn" class="download-btn">📥 Download Text File</button>
+
+          <hr>
+          <h3>Live Threshold Tuner</h3>
+          <div class="slider-group">
+            <div class="slider-label">
+              <span>Acceptance Confidence Threshold</span>
+              <span id="conf-val">60%</span>
+            </div>
+            <input type="range" id="conf-slider" min="30" max="99" value="60">
+          </div>
+          <div class="slider-group">
+            <div class="slider-label">
+              <span>Stabilization Debounce (Frames)</span>
+              <span id="debounce-val">10</span>
+            </div>
+            <input type="range" id="debounce-slider" min="3" max="25" value="10">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- === INTERACTIVE PRACTICE QUIZ PAGE === -->
+    <section id="quiz-page" class="page-section">
+      <div class="page-header">
+        <p class="eyebrow">Gamified ASL Arena</p>
+        <h1>Interactive Practice Quiz</h1>
+        <p class="sub-desc">Test your knowledge! Make the sign corresponding to the target letter and hold it stable to earn points.</p>
+      </div>
+
+      <div class="translation-layout">
+        <!-- HUD controls -->
+        <div class="output-panel">
+          <div class="quiz-score-row">
+            <div class="score-card">
+              <span class="score-label">Current Score</span>
+              <span class="score-value" id="quiz-score">0 pts</span>
+            </div>
+            <div class="streak-card">
+              <span class="score-label">Streak Status</span>
+              <span class="streak-value">🔥 Active</span>
+            </div>
+          </div>
+
+          <!-- Target Card -->
+          <div class="quiz-target-card">
+            <div class="quiz-target-header">Sign This Letter</div>
+            <div class="quiz-target-letter" id="quiz-target-letter">A</div>
+            <div class="quiz-target-emoji" id="quiz-target-emoji">✊</div>
+            <div class="quiz-target-hint" id="quiz-target-hint">Closed fist, thumb resting flat along the index finger.</div>
+          </div>
+
+          <div class="quiz-feedback-box" id="quiz-feedback-box">Ready to start. Toggle the camera feed.</div>
+
+          <button id="quiz-skip-btn" class="ctrl-btn" style="width:100%; margin-top: 1rem;">Skip Letter ⏭</button>
+          <button id="quiz-reset-btn" class="ctrl-btn" style="width:100%; margin-top: 0.5rem;">Reset Score Counter 🔄</button>
+        </div>
+
+        <!-- Camera feed -->
+        <div class="camera-panel">
+          <div class="webcam-toggle-card">
+            <label class="toggle-switch">
+              <input type="checkbox" id="quiz-webcam-checkbox">
+              <span class="slider-switch"></span>
+            </label>
+            <span class="toggle-label">🎥 Start Webcam Feed</span>
+          </div>
+
+          <div class="video-container" id="quiz-video-container">
+            <canvas id="quiz-canvas" width="640" height="480"></canvas>
+            <div class="placeholder-overlay" id="quiz-placeholder-overlay">
+              <div class="placeholder-icon">🎮</div>
+              <div class="placeholder-title">Webcam Inactive</div>
+              <div class="placeholder-desc">Toggle the checkbox above to start the webcam and begin your ASL sign test.</div>
+            </div>
+          </div>
+
+          <div class="live-status-bar" id="quiz-live-status-bar" style="display:none;">
+            <span class="live-dot"></span>
+            <span class="live-tag" style="background: rgba(45, 212, 191, 0.1); color: var(--accent-green); border-color: rgba(45, 212, 191, 0.2);">ARENA ACTIVE</span>
+            <span class="live-text" id="quiz-verification-text">Hold the target sign for 1.5 seconds to submit</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- === ASL DICTIONARY LIBRARY === -->
+    <section id="dictionary-page" class="page-section">
+      <div class="page-header">
+        <p class="eyebrow">Sign Reference Library</p>
+        <h1>ASL Dictionary</h1>
+        <p class="sub-desc">A reference grid mapping each alphabet character to its standard sign posture and shape description.</p>
+      </div>
+      <div class="dict-grid" id="dict-grid-container">
+        <!-- Dynamic Cards -->
+      </div>
+    </section>
+
+    <!-- === DETECTION HISTORY PAGE === -->
+    <section id="history-page" class="page-section">
+      <div class="page-header">
+        <p class="eyebrow">Local Logs</p>
+        <h1>Detection History Log</h1>
+        <p class="sub-desc">A complete audit log of all signs successfully debounced and typed during this session.</p>
+      </div>
+
+      <button id="clear-history-btn" class="ctrl-btn" style="margin-bottom: 1.5rem;">Clear Log History 🗑</button>
+      
+      <table class="premium-table" id="history-table">
+        <thead>
+          <tr>
+            <th>Time</th>
+            <th>Letter</th>
+            <th>Hand Used</th>
+            <th>Confidence</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Dynamic rows -->
+        </tbody>
+      </table>
+      <div class="placeholder-card" id="history-empty-placeholder" style="display:none; margin-top: 1rem;">
+        <div class="placeholder-icon">📜</div>
+        <div class="placeholder-title">No Audit Logs</div>
+        <div class="placeholder-desc">No logs recorded yet. Translate some letters first.</div>
+      </div>
+    </section>
+
+    <!-- === MODEL & SETTINGS CONFIGURATION === -->
+    <section id="settings-page" class="page-section">
+      <div class="page-header">
+        <p class="eyebrow">ML Engine Details</p>
+        <h1>Model & Settings Configuration</h1>
+        <p class="sub-desc">Configure decision filters, analyze training history, and tune threshold parameters.</p>
+      </div>
+
+      <div class="dashboard-grid">
+        <div class="dashboard-card">
+          <h3>Classification Weights</h3>
+          <div class="status-badge-container" id="model-status-badge">
+            <span class="sidebar-badge badge-green">✓ Client-side JS model</span>
+          </div>
+          <p style="font-size:0.85rem;color:var(--text-secondary);line-height:1.6;margin-top:10px;">
+            The model weights have been successfully converted from the trained Python Keras model <code>asl_hand_landmark_model.h5</code> and are executing client-side in browser JS. Zero server delays.
+          </p>
+
+          <hr>
+          <h3>Inference Rules Settings</h3>
+          <div class="slider-group">
+            <div class="slider-label">
+              <span>Min Confidence Threshold</span>
+              <span id="settings-conf-val">60%</span>
+            </div>
+            <input type="range" id="settings-conf-slider" min="30" max="99" value="60">
+          </div>
+          <div class="slider-group">
+            <div class="slider-label">
+              <span>Stabilization Debounce Frames</span>
+              <span id="settings-debounce-val">10</span>
+            </div>
+            <input type="range" id="settings-debounce-slider" min="3" max="25" value="10">
+          </div>
+        </div>
+
+        <div class="dashboard-card">
+          <h3>Neural Network Training History</h3>
+          <div class="mock-chart-container">
+            <svg viewBox="0 0 500 200" class="line-chart-svg">
+              <path d="M 0 180 L 35 150 L 70 120 L 105 100 L 140 85 L 175 75 L 210 65 L 245 55 L 280 48 L 315 42 L 350 38 L 385 34 L 420 30 L 455 25 L 500 20" fill="none" stroke="#2DD4BF" stroke-width="4"></path>
+              <circle cx="500" cy="20" r="6" fill="#2DD4BF"></circle>
+              <text x="470" y="40" fill="#2DD4BF" font-size="10">Acc: 98%</text>
+            </svg>
+            <div class="chart-labels">
+              <span>Ep 1</span><span>Ep 3</span><span>Ep 6</span><span>Ep 9</span><span>Ep 12</span><span>Ep 15</span>
+            </div>
+          </div>
+          <p style="font-size:0.75rem;color:var(--text-muted);text-align:center;margin-top:10px;">
+            Training accuracy convergence curves (Feed Forward NN on wrist-normalized landmarks)
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- === HAND LANDMARK MAP PAGE === -->
+    <section id="landmark-page" class="page-section">
+      <div class="page-header">
+        <p class="eyebrow">Feature Mapping</p>
+        <h1>MediaPipe Hand Landmark Map</h1>
+        <p class="sub-desc">Reference mapping of the 21 landmarks extracted from the hand to formulate the 42-feature neural network input vector.</p>
+      </div>
+
+      <h3>Keypoint Node Indices Reference</h3>
+      <p style="color:var(--text-secondary);font-size:0.85rem;margin-bottom:1rem;">Each keypoint is represented as a coordinates pair (X, Y) normalized to the wrist node (Node 0).</p>
+      
+      <div class="landmark-list" id="landmark-list-container">
+        <!-- Dynamic listing -->
+      </div>
+
+      <hr>
+      <h3>Feature Vector Mathematical Normalization</h3>
+      <p style="font-size:0.85rem;color:var(--text-secondary);line-height:1.75;">
+        To create a model that classifies signs independent of hand distance, camera position, or handedness, the coordinates undergo three stages of preprocessing:<br>
+        1. <strong>Translation</strong>: Shift wrist coordinate <code>Node 0</code> to <code>(0, 0)</code> by subtracting its coordinates from all other 20 points.<br>
+        2. <strong>Scaling</strong>: Compute Euclidean distances from the wrist to all keypoints and scale coordinates by dividing by the maximum distance. This ensures scale-invariance.<br>
+        3. <strong>Flipping</strong>: Mirror the x-coordinates for any detected <code>Left</code> hand by negating them (<code>X = -X</code>). This makes the neural network hand-agnostic.
+      </p>
+    </section>
+
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
