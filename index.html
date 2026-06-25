@@ -35,6 +35,7 @@
       <button class="nav-btn" data-page="history">📜 Detection History</button>
       <button class="nav-btn" data-page="settings">⚙️ Model & Settings</button>
       <button class="nav-btn" data-page="landmark">✋ Hand Landmark Map</button>
+      <button class="nav-btn" data-page="contributors">👥 Project Contributors</button>
     </nav>
 
     <div class="sidebar-footer">
@@ -374,6 +375,18 @@
         2. <strong>Scaling</strong>: Compute Euclidean distances from the wrist to all keypoints and scale coordinates by dividing by the maximum distance. This ensures scale-invariance.<br>
         3. <strong>Flipping</strong>: Mirror the x-coordinates for any detected <code>Left</code> hand by negating them (<code>X = -X</code>). This makes the neural network hand-agnostic.
       </p>
+    </section>
+
+    <!-- === CONTRIBUTORS PAGE === -->
+    <section id="contributors-page" class="page-section">
+      <div class="page-header">
+        <p class="eyebrow">Development Team</p>
+        <h1>Project Contributors</h1>
+        <p class="sub-desc">Meet the developers, designers, and researchers behind the ASL Translation Hub.</p>
+      </div>
+      <div class="contributors-grid" id="contributors-grid-container">
+        <!-- Dynamic Cards -->
+      </div>
     </section>
 
   </main>

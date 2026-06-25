@@ -98,8 +98,26 @@ const quizTargetHint = document.getElementById("quiz-target-hint");
 const quizFeedbackBox = document.getElementById("quiz-feedback-box");
 
 // ── INITIALIZATION ────────────────────────────────────────────────────────────
-window.addEventListener("DOMContentLoaded", async () => {
-  // 1. Load weights
+window.addEventListener("DOMContentLoaded", () => {
+  // 1. Setup navigation
+  setupNavigation();
+
+  // 2. Render ASL Dictionary & Landmark Map listings & Contributors
+  renderASLDictionary();
+  renderLandmarkMap();
+  renderContributors();
+
+  // 3. Setup Event Listeners
+  setupEventListeners();
+
+  // 4. Render Initial Logs
+  renderLogs();
+
+  // 5. Load weights asynchronously in the background
+  loadModelWeights();
+});
+
+async function loadModelWeights() {
   try {
     const response = await fetch("model_weights.json");
     modelWeights = await response.json();
@@ -108,20 +126,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     console.error("Failed to load neural network weights:", err);
     alert("Warning: model_weights.json not found! Running in mock classification fallback.");
   }
-
-  // 2. Setup navigation
-  setupNavigation();
-
-  // 3. Render ASL Dictionary & Landmark Map listings
-  renderASLDictionary();
-  renderLandmarkMap();
-
-  // 4. Setup Event Listeners
-  setupEventListeners();
-
-  // 5. Render Initial Logs
-  renderLogs();
-});
+}
 
 // ── NAVIGATION MENU ROUTER ───────────────────────────────────────────────────
 function setupNavigation() {
@@ -754,5 +759,122 @@ function renderLandmarkMap() {
       <span>${name}</span>
     `;
     container.appendChild(item);
+  });
+}
+
+// ── PROJECT CONTRIBUTORS RENDERING ───────────────────────────────────────────
+const CONTRIBUTORS = [
+  {
+    name: "Dipta Kishan Dutta",
+    projects: ["Image Acquisition from Camera", "Frontend Development & Integration"],
+    photo: "Photos/Dipta Kishan Dutta.jpeg"
+  },
+  {
+    name: "Priyam Chhetri",
+    projects: ["Preprocessed Dataset Preparation", "Hand Detection & Tracking"],
+    photo: "Photos/Priyam Chhetri.jpeg"
+  },
+  {
+    name: "SK Nayeemur Rahman",
+    projects: ["Backend Server Development", "Text-to-Speech Integration"],
+    photo: "Photos/SK Nayeemur Rahman.jpeg"
+  },
+  {
+    name: "Souvik Bandopadhyaya",
+    projects: ["Backend Server Development", "Backend Integration & Deployment Support"],
+    photo: "Photos/Souvik Bandopadhyaya.jpeg"
+  },
+  {
+    name: "Sagnik Chakraborty",
+    projects: ["Noise Reduction", "Image Enhancement Support"],
+    photo: "Photos/Sagnik Chakraborty.jpeg"
+  },
+  {
+    name: "Soumyajit Dey",
+    projects: ["Image Preprocessing", "Noise Reduction"],
+    photo: "Photos/Soumyajit Dey.jpeg"
+  },
+  {
+    name: "Surya Hati",
+    projects: ["Preprocessed Dataset Preparation Support", "Dataset Validation Support"],
+    photo: "Photos/Surya Hati.jpeg"
+  },
+  {
+    name: "Swambrata Dey",
+    projects: ["Preprocessed Dataset Preparation Support", "Dataset Organization Support"],
+    photo: "Photos/Swambrata Dey.jpeg"
+  },
+  {
+    name: "Swagata Bhunia",
+    projects: ["Webpage Design & UI Planning", "Frontend Workflow Documentation"],
+    photo: "Photos/Swagata Bhunia.jpeg"
+  },
+  {
+    name: "Toufik Ali",
+    projects: ["Report Documentation", "Project Documentation Support"],
+    photo: "Photos/Toufik Ali.jpeg"
+  },
+  {
+    name: "Sayan Mondal",
+    projects: ["Presentation Design & Compilation", "Project Report Preparation", "Slide Layout & Formatting"],
+    photo: "Photos/Sayan Mondal.jpeg"
+  }
+];
+
+function renderContributors() {
+  const container = document.getElementById("contributors-grid-container");
+  if (!container) return;
+  container.innerHTML = "";
+  
+  CONTRIBUTORS.forEach(c => {
+    const card = document.createElement("div");
+    card.className = "contributor-card";
+    
+    const img = document.createElement("img");
+    img.className = "contributor-avatar";
+    img.src = c.photo;
+    img.alt = c.name;
+    
+    // Auto-healing fallback path loader
+    let attempt = 0;
+    img.onerror = () => {
+      attempt++;
+      if (attempt === 1) {
+        // Try Photos/Photos/Name.jpeg (incase zip created nested folder)
+        img.src = c.photo.replace("Photos/", "Photos/Photos/");
+      } else if (attempt === 2) {
+        // Try .jpg in Photos/Photos/
+        img.src = c.photo.replace("Photos/", "Photos/Photos/").replace(".jpeg", ".jpg");
+      } else if (attempt === 3) {
+        // Try .jpg in root Photos/
+        img.src = c.photo.replace(".jpeg", ".jpg");
+      } else if (attempt === 4) {
+        // Try .png in Photos/Photos/
+        img.src = c.photo.replace("Photos/", "Photos/Photos/").replace(".jpeg", ".png");
+      } else if (attempt === 5) {
+        // Try .png in root Photos/
+        img.src = c.photo.replace(".jpeg", ".png");
+      } else {
+        // Ultimate fallback to default avatar
+        img.src = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+      }
+    };
+    
+    const nameEl = document.createElement("div");
+    nameEl.className = "contributor-name";
+    nameEl.textContent = c.name;
+    
+    const projectsList = document.createElement("ul");
+    projectsList.className = "contributor-projects";
+    c.projects.forEach(p => {
+      const li = document.createElement("li");
+      li.textContent = p;
+      projectsList.appendChild(li);
+    });
+    
+    card.appendChild(img);
+    card.appendChild(nameEl);
+    card.appendChild(projectsList);
+    container.appendChild(card);
   });
 }
