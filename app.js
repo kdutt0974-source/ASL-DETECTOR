@@ -830,12 +830,28 @@ function renderContributors() {
     img.className = "contributor-avatar";
     img.src = c.photo;
     img.alt = c.name;
+    
+    // Auto-healing fallback path loader
+    let attempt = 0;
     img.onerror = () => {
-      if (img.src.endsWith(".jpeg")) {
+      attempt++;
+      if (attempt === 1) {
+        // Try Photos/Photos/Name.jpeg (incase zip created nested folder)
+        img.src = c.photo.replace("Photos/", "Photos/Photos/");
+      } else if (attempt === 2) {
+        // Try .jpg in Photos/Photos/
+        img.src = c.photo.replace("Photos/", "Photos/Photos/").replace(".jpeg", ".jpg");
+      } else if (attempt === 3) {
+        // Try .jpg in root Photos/
         img.src = c.photo.replace(".jpeg", ".jpg");
-      } else if (img.src.endsWith(".jpg")) {
+      } else if (attempt === 4) {
+        // Try .png in Photos/Photos/
+        img.src = c.photo.replace("Photos/", "Photos/Photos/").replace(".jpeg", ".png");
+      } else if (attempt === 5) {
+        // Try .png in root Photos/
         img.src = c.photo.replace(".jpeg", ".png");
       } else {
+        // Ultimate fallback to default avatar
         img.src = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
       }
     };
