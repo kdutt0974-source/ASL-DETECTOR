@@ -98,8 +98,26 @@ const quizTargetHint = document.getElementById("quiz-target-hint");
 const quizFeedbackBox = document.getElementById("quiz-feedback-box");
 
 // ── INITIALIZATION ────────────────────────────────────────────────────────────
-window.addEventListener("DOMContentLoaded", async () => {
-  // 1. Load weights
+window.addEventListener("DOMContentLoaded", () => {
+  // 1. Setup navigation
+  setupNavigation();
+
+  // 2. Render ASL Dictionary & Landmark Map listings & Contributors
+  renderASLDictionary();
+  renderLandmarkMap();
+  renderContributors();
+
+  // 3. Setup Event Listeners
+  setupEventListeners();
+
+  // 4. Render Initial Logs
+  renderLogs();
+
+  // 5. Load weights asynchronously in the background
+  loadModelWeights();
+});
+
+async function loadModelWeights() {
   try {
     const response = await fetch("model_weights.json");
     modelWeights = await response.json();
@@ -108,21 +126,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     console.error("Failed to load neural network weights:", err);
     alert("Warning: model_weights.json not found! Running in mock classification fallback.");
   }
-
-  // 2. Setup navigation
-  setupNavigation();
-
-  // 3. Render ASL Dictionary & Landmark Map listings
-  renderASLDictionary();
-  renderLandmarkMap();
-  renderContributors();
-
-  // 4. Setup Event Listeners
-  setupEventListeners();
-
-  // 5. Render Initial Logs
-  renderLogs();
-});
+}
 
 // ── NAVIGATION MENU ROUTER ───────────────────────────────────────────────────
 function setupNavigation() {
@@ -766,9 +770,9 @@ const CONTRIBUTORS = [
     photo: "Photos/Dipta Kishan Dutta.jpeg"
   },
   {
-    name: "Priyam Chetri",
+    name: "Priyam Chhetri",
     projects: ["Preprocessed Dataset Preparation", "Hand Detection & Tracking"],
-    photo: "Photos/Priyam Chetri.jpeg"
+    photo: "Photos/Priyam Chhetri.jpeg"
   },
   {
     name: "SK Nayeemur Rahman",
