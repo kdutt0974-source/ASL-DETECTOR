@@ -115,6 +115,7 @@ window.addEventListener("DOMContentLoaded", async () => {
   // 3. Render ASL Dictionary & Landmark Map listings
   renderASLDictionary();
   renderLandmarkMap();
+  renderContributors();
 
   // 4. Setup Event Listeners
   setupEventListeners();
@@ -754,5 +755,106 @@ function renderLandmarkMap() {
       <span>${name}</span>
     `;
     container.appendChild(item);
+  });
+}
+
+// ── PROJECT CONTRIBUTORS RENDERING ───────────────────────────────────────────
+const CONTRIBUTORS = [
+  {
+    name: "Dipta Kishan Dutta",
+    projects: ["Image Acquisition from Camera", "Frontend Development & Integration"],
+    photo: "Photos/Dipta Kishan Dutta.jpeg"
+  },
+  {
+    name: "Priyam Chetri",
+    projects: ["Preprocessed Dataset Preparation", "Hand Detection & Tracking"],
+    photo: "Photos/Priyam Chetri.jpeg"
+  },
+  {
+    name: "SK Nayeemur Rahman",
+    projects: ["Backend Server Development", "Text-to-Speech Integration"],
+    photo: "Photos/SK Nayeemur Rahman.jpeg"
+  },
+  {
+    name: "Souvik Bandopadhyaya",
+    projects: ["Backend Server Development", "Backend Integration & Deployment Support"],
+    photo: "Photos/Souvik Bandopadhyaya.jpeg"
+  },
+  {
+    name: "Sagnik Chakraborty",
+    projects: ["Noise Reduction", "Image Enhancement Support"],
+    photo: "Photos/Sagnik Chakraborty.jpeg"
+  },
+  {
+    name: "Soumyajit Dey",
+    projects: ["Image Preprocessing", "Noise Reduction"],
+    photo: "Photos/Soumyajit Dey.jpeg"
+  },
+  {
+    name: "Surya Hati",
+    projects: ["Preprocessed Dataset Preparation Support", "Dataset Validation Support"],
+    photo: "Photos/Surya Hati.jpeg"
+  },
+  {
+    name: "Swambrata Dey",
+    projects: ["Preprocessed Dataset Preparation Support", "Dataset Organization Support"],
+    photo: "Photos/Swambrata Dey.jpeg"
+  },
+  {
+    name: "Swagata Bhunia",
+    projects: ["Webpage Design & UI Planning", "Frontend Workflow Documentation"],
+    photo: "Photos/Swagata Bhunia.jpeg"
+  },
+  {
+    name: "Toufik Ali",
+    projects: ["Report Documentation", "Project Documentation Support"],
+    photo: "Photos/Toufik Ali.jpeg"
+  },
+  {
+    name: "Sayan Mondal",
+    projects: ["Presentation Design & Compilation", "Project Report Preparation", "Slide Layout & Formatting"],
+    photo: "Photos/Sayan Mondal.jpeg"
+  }
+];
+
+function renderContributors() {
+  const container = document.getElementById("contributors-grid-container");
+  if (!container) return;
+  container.innerHTML = "";
+  
+  CONTRIBUTORS.forEach(c => {
+    const card = document.createElement("div");
+    card.className = "contributor-card";
+    
+    const img = document.createElement("img");
+    img.className = "contributor-avatar";
+    img.src = c.photo;
+    img.alt = c.name;
+    img.onerror = () => {
+      if (img.src.endsWith(".jpeg")) {
+        img.src = c.photo.replace(".jpeg", ".jpg");
+      } else if (img.src.endsWith(".jpg")) {
+        img.src = c.photo.replace(".jpeg", ".png");
+      } else {
+        img.src = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+      }
+    };
+    
+    const nameEl = document.createElement("div");
+    nameEl.className = "contributor-name";
+    nameEl.textContent = c.name;
+    
+    const projectsList = document.createElement("ul");
+    projectsList.className = "contributor-projects";
+    c.projects.forEach(p => {
+      const li = document.createElement("li");
+      li.textContent = p;
+      projectsList.appendChild(li);
+    });
+    
+    card.appendChild(img);
+    card.appendChild(nameEl);
+    card.appendChild(projectsList);
+    container.appendChild(card);
   });
 }
